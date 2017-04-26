@@ -1,6 +1,12 @@
 package main
 
+import (
+    "math/rand"
+    "time"
+)
+
 func main() {
-    g := NewGame(5, 5)
+    rand.Seed(time.Now().UnixNano())
+    g := NewGame(4, 4)
     g.Display()
 }
