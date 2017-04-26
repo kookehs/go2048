@@ -72,6 +72,64 @@ func (b *Board) Shuffle() {
     }
 }
 
+// SlideDown slides all cells to the bottom
+func (b *Board) SlideDown() {
+    // BUG: Cells move up instead of down
+    for x := 0; x < b.size.width; x++ {
+        for y := b.size.height - 1; y > 0; y-- {
+            for z := y; z < b.size.height; z++ {
+                curr := b.GetCell(x, z)
+                next := b.GetCell(x, z + 1)
+
+                switch next {
+                case 0:
+                    b.SetCell(x, z + 1, curr)
+                    b.SetCell(x, z, 0)
+                    break;
+                case curr:
+                    b.SetCell(x, z + 1, next * curr)
+                    b.SetCell(x, z, 0)
+                    break;
+                }   
+            }
+        }
+    }
+
+}
+
+// SlideLeft slides all cells to the left
+func (b *Board) SlideLeft() {
+
+}
+
+// SlideRight slides all cells to the right
+func (b *Board) SlideRight() {
+
+}
+
+// SlideUp slides all cells to the top
+func (b *Board) SlideUp() {
+    for x := 0; x < b.size.width; x++ {
+        for y := 1; y < b.size.height; y++ {
+            for z := y; z > 0; z-- {
+                curr := b.GetCell(x, z)
+                next := b.GetCell(x, z - 1)
+
+                switch next {
+                case 0:
+                    b.SetCell(x, z - 1, curr)
+                    b.SetCell(x, z, 0)
+                    break;
+                case curr:
+                    b.SetCell(x, z - 1, next * curr)
+                    b.SetCell(x, z, 0)
+                    break;
+                }   
+            }
+        }
+    }
+}
+
 // String returns the string representation of the board
 func (b *Board) String() string {
     // TODO: Padding needs to be dynamic
@@ -89,7 +147,13 @@ func (b *Board) String() string {
             board += "\n|"
         }
         
-        value := fmt.Sprintf("%4s", strconv.Itoa(v))
+        value := strconv.Itoa(v)
+
+        if (v == 0) {
+            value = ""
+        }
+
+        value = fmt.Sprintf("%4s", value);
         board += value + "|";
     }
     
