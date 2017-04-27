@@ -74,10 +74,13 @@ func (b *Board) Shuffle() {
 
 // SlideDown slides all cells to the bottom
 func (b *Board) SlideDown() {
-    // BUG: Cells move up instead of down
     for x := 0; x < b.size.width; x++ {
-        for y := b.size.height - 1; y > 0; y-- {
-            for z := y; z < b.size.height; z++ {
+        for y := b.size.height - 2; y >= 0; y-- {
+            if (b.GetCell(x, y) == 0) {
+                continue
+            }
+
+            for z := y; z < b.size.height - 1; z++ {
                 curr := b.GetCell(x, z)
                 next := b.GetCell(x, z + 1)
 
@@ -94,23 +97,70 @@ func (b *Board) SlideDown() {
             }
         }
     }
-
 }
 
 // SlideLeft slides all cells to the left
 func (b *Board) SlideLeft() {
+    for y := 0; y < b.size.height; y++ {
+        for x := 1; x < b.size.width; x++ {
+            if (b.GetCell(x, y) == 0) {
+                continue
+            }
 
+            for z := x; z > 0; z-- {
+                curr := b.GetCell(z, y)
+                next := b.GetCell(z - 1, y)
+
+                switch next {
+                case 0:
+                    b.SetCell(z - 1, y, curr)
+                    b.SetCell(z, y, 0)
+                    break;
+                case curr:
+                    b.SetCell(z - 1, y, next * curr)
+                    b.SetCell(z, y, 0)
+                    break;
+                }   
+            }
+        }
+    }
 }
 
 // SlideRight slides all cells to the right
 func (b *Board) SlideRight() {
+    for y := 0; y < b.size.height; y++ {
+        for x := b.size.width - 2; x >= 0; x-- {
+            if (b.GetCell(x, y) == 0) {
+                continue
+            }
 
+            for z := x; z < b.size.width - 1; z++ {
+                curr := b.GetCell(z, y)
+                next := b.GetCell(z + 1, y)
+
+                switch next {
+                case 0:
+                    b.SetCell(z + 1, y, curr)
+                    b.SetCell(z, y, 0)
+                    break;
+                case curr:
+                    b.SetCell(z + 1, y, next * curr)
+                    b.SetCell(z, y, 0)
+                    break;
+                }   
+            }
+        }
+    }
 }
 
 // SlideUp slides all cells to the top
 func (b *Board) SlideUp() {
     for x := 0; x < b.size.width; x++ {
         for y := 1; y < b.size.height; y++ {
+            if (b.GetCell(x, y) == 0) {
+                continue
+            }
+
             for z := y; z > 0; z-- {
                 curr := b.GetCell(x, z)
                 next := b.GetCell(x, z - 1)
@@ -126,6 +176,16 @@ func (b *Board) SlideUp() {
                     break;
                 }   
             }
+        }
+    }
+}
+
+// Spawn add a new cell to the board
+func (b *Board) Spawn() {
+    available = make([]int, len(b.cells))
+    for i, v := range b.cells {
+        if (v == 0) {
+
         }
     }
 }
