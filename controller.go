@@ -10,7 +10,7 @@ import (
 
 func main() {
     rand.Seed(time.Now().UnixNano())
-    g := NewGame(4, 4)
+    g := NewGame(5, 5)
     g.Display()
 
     r := bufio.NewReader(os.Stdin)

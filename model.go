@@ -92,11 +92,11 @@ func (b *Board) SlideDown() {
                 if next == curr {
                     b.SetCell(x, z + 1, curr * 2)
                     b.SetCell(x, z, 0)
-                    break;
+                    break
                 }
 
                 if next != curr {
-                    break;
+                    break
                 }
             }
         }
@@ -124,11 +124,11 @@ func (b *Board) SlideLeft() {
                 if next == curr {
                     b.SetCell(z - 1, y, curr * 2)
                     b.SetCell(z, y, 0)
-                    break;
+                    break
                 }
 
                 if next != curr {
-                    break;
+                    break
                 }
             }
         }
@@ -156,11 +156,11 @@ func (b *Board) SlideRight() {
                 if next == curr {
                     b.SetCell(z + 1, y, curr * 2)
                     b.SetCell(z, y, 0)
-                    break;
+                    break
                 }
 
                 if next != curr {
-                    break;
+                    break
                 }
             }
         }
@@ -188,11 +188,11 @@ func (b *Board) SlideUp() {
                 if next == curr {
                     b.SetCell(x, z - 1, curr * 2)
                     b.SetCell(x, z, 0)
-                    break;
+                    break
                 }
 
                 if next != curr {
-                    break;
+                    break
                 }
             }
         }
@@ -221,11 +221,11 @@ func (b *Board) Spawn() {
 // String returns the string representation of the board
 func (b *Board) String() string {
     // TODO: Padding needs to be dynamic
-    board := "|"
+    board := ""
     width := b.size.width
 
     for i, v := range b.cells {
-        if (i % width == 0 && i != 0) {
+        if (i % width == 0) {
             board += "\n|"
 
             for j := 0; j < width; j++ {
@@ -245,6 +245,12 @@ func (b *Board) String() string {
         board += value + "|";
     }
     
+    board += "\n|"
+
+    for w := 0; w < width; w++ {
+        board += "¯¯¯¯|"
+    }
+
     return board;
 }
 
