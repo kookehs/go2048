@@ -45,9 +45,8 @@ func (b *Board) Populate(n int) {
 
     for i := 0; i < n; i++ {
         b.cells[i] = 2
-        r := rand.Float64()
 
-        if (r < chanceFor4) {
+        if (rand.Float64() < chanceFor4) {
             b.cells[i] = 4
         }  
     }
@@ -84,16 +83,21 @@ func (b *Board) SlideDown() {
                 curr := b.GetCell(x, z)
                 next := b.GetCell(x, z + 1)
 
-                switch next {
-                case 0:
+                if next == 0 {
                     b.SetCell(x, z + 1, curr)
                     b.SetCell(x, z, 0)
-                    break;
-                case curr:
-                    b.SetCell(x, z + 1, next * curr)
+                    continue
+                }
+                
+                if next == curr {
+                    b.SetCell(x, z + 1, curr * 2)
                     b.SetCell(x, z, 0)
                     break;
-                }   
+                }
+
+                if next != curr {
+                    break;
+                }
             }
         }
     }
@@ -111,16 +115,21 @@ func (b *Board) SlideLeft() {
                 curr := b.GetCell(z, y)
                 next := b.GetCell(z - 1, y)
 
-                switch next {
-                case 0:
+                if next == 0 {
                     b.SetCell(z - 1, y, curr)
                     b.SetCell(z, y, 0)
-                    break;
-                case curr:
-                    b.SetCell(z - 1, y, next * curr)
+                    continue
+                }
+
+                if next == curr {
+                    b.SetCell(z - 1, y, curr * 2)
                     b.SetCell(z, y, 0)
                     break;
-                }   
+                }
+
+                if next != curr {
+                    break;
+                }
             }
         }
     }
@@ -138,16 +147,21 @@ func (b *Board) SlideRight() {
                 curr := b.GetCell(z, y)
                 next := b.GetCell(z + 1, y)
 
-                switch next {
-                case 0:
+                if next == 0 {
                     b.SetCell(z + 1, y, curr)
                     b.SetCell(z, y, 0)
-                    break;
-                case curr:
-                    b.SetCell(z + 1, y, next * curr)
+                    continue
+                }
+
+                if next == curr {
+                    b.SetCell(z + 1, y, curr * 2)
                     b.SetCell(z, y, 0)
                     break;
-                }   
+                }
+
+                if next != curr {
+                    break;
+                }
             }
         }
     }
@@ -165,16 +179,21 @@ func (b *Board) SlideUp() {
                 curr := b.GetCell(x, z)
                 next := b.GetCell(x, z - 1)
 
-                switch next {
-                case 0:
+                if next == 0 {
                     b.SetCell(x, z - 1, curr)
                     b.SetCell(x, z, 0)
-                    break;
-                case curr:
-                    b.SetCell(x, z - 1, next * curr)
+                    continue
+                }
+
+                if next == curr {
+                    b.SetCell(x, z - 1, curr * 2)
                     b.SetCell(x, z, 0)
                     break;
-                }   
+                }
+
+                if next != curr {
+                    break;
+                }
             }
         }
     }
@@ -182,12 +201,21 @@ func (b *Board) SlideUp() {
 
 // Spawn add a new cell to the board
 func (b *Board) Spawn() {
-    available = make([]int, len(b.cells))
+    available := make([]int, 0, len(b.cells))
+
     for i, v := range b.cells {
         if (v == 0) {
-
+            available = append(available, i);
         }
     }
+
+    index := available[rand.Intn(len(available))]
+    b.cells[index] = 2
+    chanceFor4 := 0.25
+
+    if (rand.Float64() < chanceFor4) {
+        b.cells[index] = 4
+    }  
 }
 
 // String returns the string representation of the board

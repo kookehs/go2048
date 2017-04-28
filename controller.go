@@ -37,16 +37,20 @@ func main() {
 func handleInput(i string, g *Game) bool {
     switch i {
     case "w":
-        g.board.SlideUp();
+        g.board.SlideUp()
+        g.board.Spawn()
         break;
     case "a":
-        g.board.SlideLeft();
+        g.board.SlideLeft()
+        g.board.Spawn()
         break;
     case "s":
-        g.board.SlideDown();
+        g.board.SlideDown()
+        g.board.Spawn()
         break;
     case "d":
-        g.board.SlideRight();
+        g.board.SlideRight()
+        g.board.Spawn()
         break;
     case "q":
         return true;
