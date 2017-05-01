@@ -6,6 +6,12 @@ import (
     "strconv"
 )
 
+const (
+    PLAY = iota
+    QUIT = iota
+    RETRY = iota
+)
+
 // dimensions contains width and height
 type Dimensions struct {
     width, height int
@@ -25,16 +31,13 @@ func NewBoard(width, height int) *Board {
     return b
 }
 
-// CellsEquals returns if the cells are deeply equal
-func (b *Board) CellsEquals(o []int) bool {
-    for i := 0; i < len(b.cells); i++ {
-        if b.cells[i] != o[i] {
-            return false
-        }
-    }
-
-    return true
-
+// CopyBoard returns a deep copy
+func CopyBoard(o *Board) *Board {
+    b := new(Board)
+    b.size = Dimensions{width: o.size.width, height: o.size.height}
+    b.cells = make([]int, b.size.width * b.size.height)
+    copy(b.cells, o.cells)
+    return b
 }
 
 // Equals returns if the two objects are deeply equal
@@ -103,7 +106,7 @@ func (b *Board) Shuffle() {
 }
 
 // SlideDown slides all cells to the bottom
-func (b *Board) SlideDown() {
+func (b *Board) SlideDown() *Board {
     for x := 0; x < b.size.width; x++ {
         for y := b.size.height - 2; y >= 0; y-- {
             if (b.GetCell(x, y) == 0) {
@@ -132,10 +135,12 @@ func (b *Board) SlideDown() {
             }
         }
     }
+
+    return b
 }
 
 // SlideLeft slides all cells to the left
-func (b *Board) SlideLeft() {
+func (b *Board) SlideLeft() *Board {
     for y := 0; y < b.size.height; y++ {
         for x := 1; x < b.size.width; x++ {
             if (b.GetCell(x, y) == 0) {
@@ -164,10 +169,12 @@ func (b *Board) SlideLeft() {
             }
         }
     }
+
+    return b
 }
 
 // SlideRight slides all cells to the right
-func (b *Board) SlideRight() {
+func (b *Board) SlideRight() *Board {
     for y := 0; y < b.size.height; y++ {
         for x := b.size.width - 2; x >= 0; x-- {
             if (b.GetCell(x, y) == 0) {
@@ -196,10 +203,12 @@ func (b *Board) SlideRight() {
             }
         }
     }
+
+    return b
 }
 
 // SlideUp slides all cells to the top
-func (b *Board) SlideUp() {
+func (b *Board) SlideUp() *Board {
     for x := 0; x < b.size.width; x++ {
         for y := 1; y < b.size.height; y++ {
             if (b.GetCell(x, y) == 0) {
@@ -228,6 +237,8 @@ func (b *Board) SlideUp() {
             }
         }
     }
+
+    return b
 }
 
 // Spawn add a new cell to the board
@@ -251,7 +262,6 @@ func (b *Board) Spawn() {
 
 // String returns the string representation of the board
 func (b *Board) String() string {
-    // TODO: Padding needs to be dynamic
     board := ""
     width := b.size.width
 
@@ -288,6 +298,7 @@ func (b *Board) String() string {
 // Game contains information regarding the state
 type Game struct {
     board *Board
+    state int
 }
 
 // NewGame returns an initialized Game
@@ -296,5 +307,15 @@ func NewGame(width, height int) *Game {
     g.board = NewBoard(width, height)
     g.board.Populate(2)
     g.board.Shuffle()
+    g.state = PLAY
     return g
+}
+
+// MovesLeft returns whether or not there are possible moves
+func (g *Game) MovesLeft() bool {
+    base := CopyBoard(g.board)
+    return !base.Equals(CopyBoard(g.board).SlideDown()) ||
+        !base.Equals(CopyBoard(g.board).SlideLeft()) ||
+        !base.Equals(CopyBoard(g.board).SlideRight()) ||
+        !base.Equals(CopyBoard(g.board).SlideUp())
 }
