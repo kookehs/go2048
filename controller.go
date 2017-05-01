@@ -10,7 +10,7 @@ import (
 
 func main() {
     rand.Seed(time.Now().UnixNano())
-    g := NewGame(5, 5)
+    g := NewGame(4, 4)
     g.Display()
 
     r := bufio.NewReader(os.Stdin)
@@ -24,37 +24,42 @@ func main() {
 
         trimmed := input[:len(input) - 1]
 
-        if (handleInput(trimmed, g)) {
-            break;
+        if (update(trimmed, g)) {
+            break
         }
 
         g.Display()
     }
 }
 
-// handleInput takes action based on input.
+// update takes action based on input.
 // Returns true if application is to close.
-func handleInput(i string, g *Game) bool {
+func update(i string, g *Game) bool {
+    old := make([]int, len(g.board.cells))
+    copy (old, g.board.cells)
+
     switch i {
     case "w":
         g.board.SlideUp()
-        g.board.Spawn()
-        break;
+        break
     case "a":
         g.board.SlideLeft()
-        g.board.Spawn()
-        break;
+        break
     case "s":
         g.board.SlideDown()
-        g.board.Spawn()
-        break;
+        break
     case "d":
         g.board.SlideRight()
-        g.board.Spawn()
-        break;
+        break
     case "q":
-        return true;
+        return true
+    default:
+        return false
     }
 
-    return false;
+    if !g.board.CellsEquals(old) {
+        g.board.Spawn()
+    }
+
+    return false
 }

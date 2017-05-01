@@ -25,6 +25,37 @@ func NewBoard(width, height int) *Board {
     return b
 }
 
+// CellsEquals returns if the cells are deeply equal
+func (b *Board) CellsEquals(o []int) bool {
+    for i := 0; i < len(b.cells); i++ {
+        if b.cells[i] != o[i] {
+            return false
+        }
+    }
+
+    return true
+
+}
+
+// Equals returns if the two objects are deeply equal
+func (b *Board) Equals(o *Board) bool {
+    if b.size.width != o.size.width {
+        return false
+    }
+
+    if b.size.height != o.size.height {
+        return false
+    }
+
+    for i := 0; i < len(b.cells); i++ {
+        if b.cells[i] != o.cells[i] {
+            return false
+        }
+    }
+
+    return true
+}
+
 // GetDimensions returns the dimensions of the board
 func (b *Board) GetDimensions() Dimensions {
     return b.size
