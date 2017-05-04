@@ -108,27 +108,27 @@ func (b *Board) Shuffle() {
 // SlideDown slides all cells to the bottom
 func (b *Board) SlideDown() *Board {
     for x := 0; x < b.size.width; x++ {
+        limit := b.size.height - 1
+
         for y := b.size.height - 2; y >= 0; y-- {
             if (b.GetCell(x, y) == 0) {
                 continue
             }
 
-            slide := false
-
-            for z := y; z < b.size.height - 1; z++ {
+            for z := y; z + 1 <= limit; z++ {
                 curr := b.GetCell(x, z)
                 next := b.GetCell(x, z + 1)
 
                 if next == 0 {
                     b.SetCell(x, z + 1, curr)
                     b.SetCell(x, z, 0)
-                    slide = true
                     continue
                 }
                 
-                if next == curr && !slide {
+                if next == curr {
                     b.SetCell(x, z + 1, curr * 2)
                     b.SetCell(x, z, 0)
+                    limit = z
                     break
                 }
 
@@ -145,27 +145,27 @@ func (b *Board) SlideDown() *Board {
 // SlideLeft slides all cells to the left
 func (b *Board) SlideLeft() *Board {
     for y := 0; y < b.size.height; y++ {
+        limit := 0
+
         for x := 1; x < b.size.width; x++ {
             if (b.GetCell(x, y) == 0) {
                 continue
             }
 
-            slide := false
-
-            for z := x; z > 0; z-- {
+            for z := x; z - 1 >= limit; z-- {
                 curr := b.GetCell(z, y)
                 next := b.GetCell(z - 1, y)
 
                 if next == 0 {
                     b.SetCell(z - 1, y, curr)
                     b.SetCell(z, y, 0)
-                    slide = true
                     continue
                 }
 
-                if next == curr && !slide {
+                if next == curr {
                     b.SetCell(z - 1, y, curr * 2)
                     b.SetCell(z, y, 0)
+                    limit = z
                     break
                 }
 
@@ -182,27 +182,27 @@ func (b *Board) SlideLeft() *Board {
 // SlideRight slides all cells to the right
 func (b *Board) SlideRight() *Board {
     for y := 0; y < b.size.height; y++ {
+        limit := b.size.width - 1
+
         for x := b.size.width - 2; x >= 0; x-- {
             if (b.GetCell(x, y) == 0) {
                 continue
             }
 
-            slide := false
-
-            for z := x; z < b.size.width - 1; z++ {
+            for z := x; z + 1 <= limit; z++ {
                 curr := b.GetCell(z, y)
                 next := b.GetCell(z + 1, y)
 
                 if next == 0 {
                     b.SetCell(z + 1, y, curr)
                     b.SetCell(z, y, 0)
-                    slide = true
                     continue
                 }
 
-                if next == curr && !slide {
+                if next == curr {
                     b.SetCell(z + 1, y, curr * 2)
                     b.SetCell(z, y, 0)
+                    limit = z
                     break
                 }
 
@@ -219,27 +219,27 @@ func (b *Board) SlideRight() *Board {
 // SlideUp slides all cells to the top
 func (b *Board) SlideUp() *Board {
     for x := 0; x < b.size.width; x++ {
+        limit := 0
+
         for y := 1; y < b.size.height; y++ {
             if (b.GetCell(x, y) == 0) {
                 continue
             }
 
-            slide := false
-
-            for z := y; z > 0; z-- {
+            for z := y; z - 1 >= limit; z-- {
                 curr := b.GetCell(x, z)
                 next := b.GetCell(x, z - 1)
 
                 if next == 0 {
                     b.SetCell(x, z - 1, curr)
                     b.SetCell(x, z, 0)
-                    slide = true
                     continue
                 }
 
-                if next == curr && !slide {
+                if next == curr {
                     b.SetCell(x, z - 1, curr * 2)
                     b.SetCell(x, z, 0)
+                    limit = z
                     break
                 }
 
