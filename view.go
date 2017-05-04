@@ -5,9 +5,9 @@ import (
 )
 
 func (b *Board) Display() {
-    fmt.Println(b);
+    fmt.Println(b)
 }
 
 func (g *Game) Display() {
-    fmt.Println(g.board);
+    fmt.Println(g)
 }

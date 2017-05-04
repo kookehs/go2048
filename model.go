@@ -12,6 +12,13 @@ const (
     RETRY = iota
 )
 
+const (
+    DOWN = iota
+    LEFT = iota
+    RIGHT = iota
+    UP = iota
+)
+
 // dimensions contains width and height
 type Dimensions struct {
     width, height int
@@ -105,8 +112,11 @@ func (b *Board) Shuffle() {
     }
 }
 
-// SlideDown slides all cells to the bottom
-func (b *Board) SlideDown() *Board {
+// SlideDown slides all cells to the bottom.
+// Returns the updated board and the score.
+func (b *Board) SlideDown() (*Board, int) {
+    score := 0
+
     for x := 0; x < b.size.width; x++ {
         limit := b.size.height - 1
 
@@ -129,6 +139,7 @@ func (b *Board) SlideDown() *Board {
                     b.SetCell(x, z + 1, curr * 2)
                     b.SetCell(x, z, 0)
                     limit = z
+                    score += curr * 2
                     break
                 }
 
@@ -139,11 +150,14 @@ func (b *Board) SlideDown() *Board {
         }
     }
 
-    return b
+    return b, score
 }
 
-// SlideLeft slides all cells to the left
-func (b *Board) SlideLeft() *Board {
+// SlideLeft slides all cells to the left.
+// Returns the updated board and the score.
+func (b *Board) SlideLeft() (*Board, int) {
+    score := 0
+
     for y := 0; y < b.size.height; y++ {
         limit := 0
 
@@ -166,6 +180,7 @@ func (b *Board) SlideLeft() *Board {
                     b.SetCell(z - 1, y, curr * 2)
                     b.SetCell(z, y, 0)
                     limit = z
+                    score += curr * 2
                     break
                 }
 
@@ -176,11 +191,14 @@ func (b *Board) SlideLeft() *Board {
         }
     }
 
-    return b
+    return b, score
 }
 
-// SlideRight slides all cells to the right
-func (b *Board) SlideRight() *Board {
+// SlideRight slides all cells to the right.
+// Returns the updated board and the score.
+func (b *Board) SlideRight() (*Board, int) {
+    score := 0
+
     for y := 0; y < b.size.height; y++ {
         limit := b.size.width - 1
 
@@ -203,6 +221,7 @@ func (b *Board) SlideRight() *Board {
                     b.SetCell(z + 1, y, curr * 2)
                     b.SetCell(z, y, 0)
                     limit = z
+                    score += curr * 2
                     break
                 }
 
@@ -213,11 +232,14 @@ func (b *Board) SlideRight() *Board {
         }
     }
 
-    return b
+    return b, score
 }
 
-// SlideUp slides all cells to the top
-func (b *Board) SlideUp() *Board {
+// SlideUp slides all cells to the top.
+// Returns the updated board and the score.
+func (b *Board) SlideUp() (*Board, int) {
+    score := 0
+
     for x := 0; x < b.size.width; x++ {
         limit := 0
 
@@ -240,6 +262,7 @@ func (b *Board) SlideUp() *Board {
                     b.SetCell(x, z - 1, curr * 2)
                     b.SetCell(x, z, 0)
                     limit = z
+                    score += curr * 2
                     break
                 }
 
@@ -250,7 +273,7 @@ func (b *Board) SlideUp() *Board {
         }
     }
 
-    return b
+    return b, score
 }
 
 // Spawn add a new cell to the board
@@ -310,6 +333,7 @@ func (b *Board) String() string {
 // Game contains information regarding the state
 type Game struct {
     board *Board
+    score int
     state int
 }
 
@@ -319,15 +343,70 @@ func NewGame(width, height int) *Game {
     g.board = NewBoard(width, height)
     g.board.Populate(2)
     g.board.Shuffle()
+    g.score = 0
     g.state = PLAY
     return g
 }
 
+// AddScore adds the given value to the tracked score
+func (g *Game) AddScore(score int) {
+    g.score += score
+}
+
+// Moves returns an array of possible moves
+func (g *Game) Moves() []int {
+    moves := make([]int, 0, 4)
+    base := CopyBoard(g.board)
+    
+    board, _ := CopyBoard(g.board).SlideDown()
+
+    if !base.Equals(board) {
+        moves = append(moves, DOWN)
+    }
+
+    board, _ = CopyBoard(g.board).SlideLeft()
+
+    if !base.Equals(board) {
+        moves = append(moves, LEFT)
+    }
+
+    board, _ = CopyBoard(g.board).SlideLeft()
+
+    if !base.Equals(board) {
+        moves = append(moves, RIGHT)
+    }
+
+    board, _ = CopyBoard(g.board).SlideUp()
+
+    if !base.Equals(board) {
+        moves = append(moves, UP)
+    }
+
+    return moves
+}
+
 // MovesLeft returns whether or not there are possible moves
 func (g *Game) MovesLeft() bool {
-    base := CopyBoard(g.board)
-    return !base.Equals(CopyBoard(g.board).SlideDown()) ||
-        !base.Equals(CopyBoard(g.board).SlideLeft()) ||
-        !base.Equals(CopyBoard(g.board).SlideRight()) ||
-        !base.Equals(CopyBoard(g.board).SlideUp())
+    return len(g.Moves()) > 0
 }
+
+// String returns the string representation of the game
+func (g *Game) String() string {
+    game := "_"
+
+    for i := 0; i < g.board.size.width; i++ {
+        game += "_____"
+    }
+    
+    value := fmt.Sprintf("%6s",  strconv.Itoa(g.score))
+    game += "\n|\tScore " + value + "|\n"
+
+    for i := 0; i < g.board.size.width; i++ {
+        game += "¯¯¯¯¯"
+    }
+
+    game += "¯"
+    game += g.board.String()
+    return game
+}
+

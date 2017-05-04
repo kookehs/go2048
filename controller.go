@@ -85,13 +85,17 @@ func update(i string, g *Game) {
 
     switch trimmed {
     case "w":
-        g.board.SlideUp()
+        _, score := g.board.SlideUp()
+        g.AddScore(score)
     case "a":
-        g.board.SlideLeft()
+        _, score := g.board.SlideLeft()
+        g.AddScore(score)
     case "s":
-        g.board.SlideDown()
+        _, score := g.board.SlideDown()
+        g.AddScore(score)
     case "d":
-        g.board.SlideRight()
+        _, score := g.board.SlideRight()
+        g.AddScore(score)
     case "q":
         g.state = QUIT
     default:
