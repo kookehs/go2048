@@ -12,12 +12,19 @@ const (
     RETRY = iota
 )
 
+// State is a type alias for integer representing game states
+type State int
+
 const (
+    NONE = iota
     DOWN = iota
     LEFT = iota
     RIGHT = iota
     UP = iota
 )
+
+// Direction is a type alias for integer representing movement directions
+type Direction int
 
 // dimensions contains width and height
 type Dimensions struct {
@@ -334,7 +341,7 @@ func (b *Board) String() string {
 type Game struct {
     board *Board
     score int
-    state int
+    state State
 }
 
 // NewGame returns an initialized Game
@@ -354,8 +361,8 @@ func (g *Game) AddScore(score int) {
 }
 
 // Moves returns an array of possible moves
-func (g *Game) Moves() []int {
-    moves := make([]int, 0, 4)
+func (g *Game) Moves() []Direction {
+    moves := make([]Direction, 0, 4)
     base := CopyBoard(g.board)
     
     board, _ := CopyBoard(g.board).SlideDown()
