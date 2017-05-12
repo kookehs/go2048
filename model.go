@@ -309,13 +309,13 @@ func (b *Board) String() string {
 
     for i, v := range b.cells {
         if (i % width == 0) {
-            board += "\n|"
+            board += "\n█"
 
             for j := 0; j < width; j++ {
-                board += "----|"
+                board += "█████"
             }
 
-            board += "\n|"
+            board += "\n█"
         }
         
         value := strconv.Itoa(v)
@@ -325,13 +325,13 @@ func (b *Board) String() string {
         }
 
         value = fmt.Sprintf("%4s", value);
-        board += value + "|";
+        board += value + "█";
     }
     
-    board += "\n|"
+    board += "\n█"
 
     for w := 0; w < width; w++ {
-        board += "¯¯¯¯|"
+        board += "█████"
     }
 
     return board;
@@ -399,20 +399,15 @@ func (g *Game) MovesLeft() bool {
 
 // String returns the string representation of the game
 func (g *Game) String() string {
-    game := "_"
+    game := "█"
 
     for i := 0; i < g.board.size.width; i++ {
-        game += "_____"
+        game += "█████"
     }
     
     value := fmt.Sprintf("%6s",  strconv.Itoa(g.score))
-    game += "\n|\tScore " + value + "|\n"
+    game += "\n█\tScore " + value + "█"
 
-    for i := 0; i < g.board.size.width; i++ {
-        game += "¯¯¯¯¯"
-    }
-
-    game += "¯"
     game += g.board.String()
     return game
 }
