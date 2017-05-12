@@ -12,7 +12,7 @@ type Nodes []*Node
 type Node struct {
     children Nodes
     move Direction
-    open []Direction
+    moves []Direction
     parent *Node
     score int
     visits int
@@ -23,17 +23,41 @@ func NewNode(move Direction, parent *Node, game *Game) *Node {
     n := new(Node)
     n.children = make(Nodes, 0)
     n.move = move
-    n.open = game.Moves()
+    n.moves = game.Moves()
     n.parent = parent
     n.score = 0
     n.visits = 0
     return n
 }
 
+// AddChild appends a child to children and returns it
+func (n *Node) AddChild(move Direction, game *Game) *Node {
+    c := NewNode(move, n, game)
+
+    n.children = append(n.children, c)
+    return c
+}
+
 // BestChild returns the child with the highest UCT score
 func (n *Node) BestChild() *Node {
     sort.Sort(n.children)
     return n.children[len(n.children) - 1]
+}
+
+// RemoveMove removes the specified element
+func (n *Node) RemoveMove(move Direction) {
+    index := -1
+
+    for i, v := range n.moves {
+        if v == move {
+            index = i
+            break
+        }
+    }
+    
+    lastIndex := len(n.moves) - 1
+    n.moves[lastIndex], n.moves[index] = n.moves[index], n.moves[lastIndex]
+    n.moves = n.moves[:lastIndex]
 }
 
 // UCT returns the calculated UCT score
