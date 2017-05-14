@@ -141,7 +141,7 @@ func (b *Board) SlideDown() (*Board, int) {
                     b.SetCell(x, z, 0)
                     continue
                 }
-                
+
                 if next == curr {
                     b.SetCell(x, z + 1, curr * 2)
                     b.SetCell(x, z, 0)
@@ -299,7 +299,7 @@ func (b *Board) Spawn() {
 
     if (rand.Float64() < chanceFor4) {
         b.cells[index] = 4
-    }  
+    }
 }
 
 // String returns the string representation of the board
@@ -317,7 +317,7 @@ func (b *Board) String() string {
 
             board += "\n█"
         }
-        
+
         value := strconv.Itoa(v)
 
         if (v == 0) {
@@ -327,7 +327,7 @@ func (b *Board) String() string {
         value = fmt.Sprintf("%4s", value);
         board += value + "█";
     }
-    
+
     board += "\n█"
 
     for w := 0; w < width; w++ {
@@ -355,16 +355,47 @@ func NewGame(width, height int) *Game {
     return g
 }
 
+// CopyGame returns a deep copy
+func CopyGame(o *Game) *Game {
+    g := new(Game)
+    g.board = CopyBoard(o.board)
+    g.score = o.score
+    g.state = o.state
+    return g
+}
+
 // AddScore adds the given value to the tracked score
 func (g *Game) AddScore(score int) {
     g.score += score
+}
+
+// ApplyMove updates state with the given move
+func (g *Game) ApplyMove(move Direction) {
+    old := CopyBoard(g.board)
+    score := 0
+
+    switch move {
+    case DOWN:
+        _, score = g.board.SlideDown()
+    case LEFT:
+        _, score = g.board.SlideLeft()
+    case RIGHT:
+        _, score = g.board.SlideRight()
+    case UP:
+        _, score = g.board.SlideUp()
+    }
+
+    g.AddScore(score)
+
+    if !g.board.Equals(old) {
+        g.board.Spawn()
+    }
 }
 
 // Moves returns an array of possible moves
 func (g *Game) Moves() []Direction {
     moves := make([]Direction, 0, 4)
     base := CopyBoard(g.board)
-    
     board, _ := CopyBoard(g.board).SlideDown()
 
     if !base.Equals(board) {
@@ -404,10 +435,9 @@ func (g *Game) String() string {
     for i := 0; i < g.board.size.width; i++ {
         game += "█████"
     }
-    
+
     value := fmt.Sprintf("%6s",  strconv.Itoa(g.score))
     game += "\n█\tScore " + value + "█"
-
     game += g.board.String()
     return game
 }

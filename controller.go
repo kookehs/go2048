@@ -18,13 +18,21 @@ func main() {
     r := bufio.NewReader(os.Stdin)
 
     for {
-        input, err :=  r.ReadString('\n')
+        ai := true
 
-        if err != nil {
-            log.Fatal(err)
+        if ai {
+            move := MCTS(g)
+            g.ApplyMove(move)
+        } else {
+            input, err :=  r.ReadString('\n')
+
+            if err != nil {
+                log.Fatal(err)
+            }
+
+            update(strings.ToLower(input), g)
         }
 
-        update(strings.ToLower(input), g)
         g.Display()
         lateUpdate(g)
 
@@ -55,7 +63,7 @@ func lateUpdate(g *Game) {
 func retry(r *bufio.Reader) bool {
     fmt.Println("Game over. Do you want to play again?")
     input, err := r.ReadString('\n');
-            
+
     if err != nil {
         log.Fatal(err)
     }
@@ -81,28 +89,23 @@ func retry(r *bufio.Reader) bool {
 // update takes action based on input
 func update(i string, g *Game) {
     trimmed := strings.TrimRight(i, "\n")
-    old := CopyBoard(g.board)
+    var move Direction = NONE
 
     switch trimmed {
     case "w":
-        _, score := g.board.SlideUp()
-        g.AddScore(score)
+        move = UP
     case "a":
-        _, score := g.board.SlideLeft()
-        g.AddScore(score)
+        move = LEFT
     case "s":
-        _, score := g.board.SlideDown()
-        g.AddScore(score)
+        move = DOWN
     case "d":
-        _, score := g.board.SlideRight()
-        g.AddScore(score)
+        move = RIGHT
     case "q":
         g.state = QUIT
+        fallthrough
     default:
         return
     }
 
-    if !g.board.Equals(old) {
-        g.board.Spawn()
-    }
+    g.ApplyMove(move)
 }
